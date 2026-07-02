@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruta a la moto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0b0d;
+    --panel:#161419;
+    --panel-2:#1d1a21;
+    --line:#2c2833;
+    --bone:#e9e4d8;
+    --muted:#8f8a94;
+    --rust:#8a3a3a;
+    --rust-bright:#c05252;
+    --ember:#c99a4e;
+    --ember-dim:#7d6535;
+    --good:#7a9a6b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--bone);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:28px 18px 60px;
+    background-image:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(138,58,58,0.10), transparent 60%);
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ember);
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:28px;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+    margin:0 0 22px;
+    color:var(--bone);
+  }
+  h1 span{color:var(--rust-bright);}
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px 20px;
+    margin-bottom:16px;
+  }
+  .hero-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    margin-bottom:6px;
+  }
+  .hero-number{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:44px;
+    color:var(--bone);
+    line-height:1;
+    letter-spacing:-0.01em;
+  }
+  .hero-number span{color:var(--muted);font-size:20px;font-weight:400;}
+  .hero-goal{
+    font-family:'JetBrains Mono',monospace;
+    font-size:14px;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .hero-goal b{color:var(--ember);font-weight:500;}
+  .road-wrap{margin-top:26px;position:relative;}
+  .road{
+    position:relative;
+    height:34px;
+    background:#141216;
+    border-radius:6px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .road-fill{
+    position:absolute;top:0;left:0;height:100%;
+    background:linear-gradient(90deg, var(--ember-dim), var(--rust));
+    transition:width 0.6s ease;
+  }
+  .road-dashes{
+    position:absolute;top:50%;left:0;width:100%;height:2px;
+    transform:translateY(-50%);
+    background-image:repeating-linear-gradient(90deg, rgba(233,228,216,0.35) 0 14px, transparent 14px 26px);
+    animation:dashmove 1.8s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .road-dashes{animation:none;} }
+  @keyframes dashmove{ from{background-position:0 0;} to{background-position:-40px 0;} }
+  .moto-marker{
+    position:absolute;top:50%;
+    transform:translate(-50%,-50%);
+    font-size:20px;
+    transition:left 0.6s ease;
+    filter:drop-shadow(0 0 4px rgba(0,0,0,0.6));
+  }
+  .km-row{
+    display:flex;justify-content:space-between;
+    margin-top:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted);
+    letter-spacing:0.04em;
+  }
+  .km-row span.hit{color:var(--ember);}
+  .stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  .stat{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+  }
+  .stat-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--muted);
+    margin-bottom:4px;
+  }
+  .stat-value{
+    font-family:'JetBrains Mono',monospace;
+    font-size:19px;
+    font-weight:700;
+    color:var(--bone);
+  }
+  .stat-value.good{color:var(--good);}
+  .stat-value.warn{color:var(--rust-bright);}
+  .form-title{
+    font-family:'Oswald',sans-serif;
+    font-size:15px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--bone);
+    margin:0 0 14px;
+  }
+  .form-row{display:flex;gap:10px;margin-bottom:10px;}
+  input{
+    background:#0f0d11;
+    border:1px solid var(--line);
+    border-radius:6px;
+    color:var(--bone);
+    font-family:'JetBrains Mono',monospace;
+    font-size:14px;
+    padding:10px 12px;
+    width:100%;
+  }
+  input:focus{outline:2px solid var(--ember);outline-offset:1px;}
+  input::placeholder{color:var(--muted);}
+  button{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    font-size:13px;
+    font-weight:600;
+    border:none;
+    border-radius:6px;
+    padding:10px 18px;
+    cursor:pointer;
+    transition:filter 0.15s ease;
+  }
+  button:focus-visible{outline:2px solid var(--ember);outline-offset:2px;}
+  .btn-primary{background:var(--rust);color:var(--bone);}
+  .btn-primary:hover{filter:brightness(1.15);}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line);padding:6px 10px;font-size:11px;}
+  .btn-ghost:hover{color:var(--rust-bright);border-color:var(--rust-bright);}
+  .history-item{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+  }
+  .history-item:last-child{border-bottom:none;}
+  .history-date{color:var(--muted);}
+  .history-amount{color:var(--bone);font-weight:500;}
+  .history-empty{color:var(--muted);font-size:13px;font-family:'Inter',sans-serif;padding:8px 0;}
+  .settings-toggle{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    cursor:pointer;
+    text-decoration:underline;
+    text-decoration-color:var(--line);
+    background:none;border:none;padding:0;
+  }
+  .settings-body{margin-top:14px;display:none;}
+  .settings-body.open{display:block;}
+  label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    display:block;
+    margin-bottom:4px;
+  }
+  .loading{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">RUTA A LA MOTO — YANGO / DIDI</div>
+  <h1>80 MIL <span>A LA VEZ</span></h1>
+  <div class="panel">
+    <div class="hero-label">Ahorrado hasta hoy</div>
+    <div class="hero-number" id="totalAhorrado">$0</div>
+    <div class="hero-goal">Meta: <b id="goalDisplay">$30,000,000</b> · <span id="pctDisplay">0%</span></div>
+    <div class="road-wrap">
+      <div class="road">
+        <div class="road-fill" id="roadFill" style="width:0%"></div>
+        <div class="road-dashes"></div>
+        <div class="moto-marker" id="motoMarker" style="left:0%">🏍️</div>
+      </div>
+      <div class="km-row">
+        <span id="km0">0</span>
+        <span id="km25">25%</span>
+        <span id="km50">50%</span>
+        <span id="km75">75%</span>
+        <span id="km100">MOTO</span>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Falta</div>
+        <div class="stat-value" id="statRemaining">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Promedio diario</div>
+        <div class="stat-value" id="statAvg">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Días registrados</div>
+        <div class="stat-value" id="statDays">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Días estimados restantes</div>
+        <div class="stat-value" id="statEta">—</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="form-title">Registrar hoy</div>
+    <div class="form-row">
+      <input type="date" id="inputDate">
+      <input type="number" id="inputAmount" placeholder="Monto ahorrado, ej: 80000">
+    </div>
+    <button class="btn-primary" id="btnAdd">Registrar</button>
+    <span id="formMsg" style="margin-left:10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--good);"></span>
+  </div>
+  <div class="panel">
+    <div class="form-title">Historial</div>
+    <div id="historyList"><div class="loading">Cargando…</div></div>
+  </div>
+  <div class="panel">
+    <button class="settings-toggle" id="settingsToggle">Ajustar meta y objetivo diario</button>
+    <div class="settings-body" id="settingsBody">
+      <div class="form-row">
+        <div style="flex:1;">
+          <label for="inputGoal">Meta total (moto)</label>
+          <input type="number" id="inputGoal" placeholder="30000000">
+        </div>
+        <div style="flex:1;">
+          <label for="inputTarget">Objetivo diario</label>
+          <input type="number" id="inputTarget" placeholder="80000">
+        </div>
+      </div>
+      <button class="btn-primary" id="btnSaveSettings">Guardar</button>
+      <button class="btn-ghost" id="btnReset" style="margin-left:8px;">Borrar todo</button>
+    </div>
+  </div>
+</div>
+<script>
+const STORAGE_KEY = 'ruta-moto:data';
+let state = { goal: 30000000, dailyTarget: 80000, entries: [] };
+function fmt(n){ return '$' + Math.round(n).toLocaleString('es-CO'); }
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ const parsed = JSON.parse(raw); state = Object.assign(state, parsed); }
+  }catch(e){}
+  render();
+}
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e){
+    document.getElementById('formMsg').textContent = 'No se pudo guardar en este navegador.';
+    document.getElementById('formMsg').style.color = 'var(--rust-bright)';
+  }
+}
+function totalSaved(){ return state.entries.reduce((sum,e)=>sum+e.amount,0); }
+function render(){
+  const total = totalSaved();
+  const pct = Math.min(100, (total/state.goal)*100);
+  const remaining = Math.max(0, state.goal - total);
+  document.getElementById('totalAhorrado').innerHTML = fmt(total) + ' <span>de ' + fmt(state.goal) + '</span>';
+  document.getElementById('goalDisplay').textContent = fmt(state.goal);
+  document.getElementById('pctDisplay').textContent = pct.toFixed(1) + '%';
+  document.getElementById('roadFill').style.width = pct + '%';
+  document.getElementById('motoMarker').style.left = pct + '%';
+  ['km25','km50','km75','km100'].forEach((id,i)=>{
+    const threshold = [25,50,75,100][i];
+    document.getElementById(id).classList.toggle('hit', pct >= threshold);
+  });
+  document.getElementById('statRemaining').textContent = fmt(remaining);
+  const days = state.entries.length;
+  document.getElementById('statDays').textContent = days;
+  const avg = days > 0 ? total/days : 0;
+  const avgEl = document.getElementById('statAvg');
+  avgEl.textContent = fmt(avg);
+  avgEl.className = 'stat-value ' + (avg >= state.dailyTarget ? 'good' : (avg > 0 ? 'warn' : ''));
+  const etaEl = document.getElementById('statEta');
+  if(avg > 0 && remaining > 0){ etaEl.textContent = Math.ceil(remaining/avg) + ' días'; }
+  else if(remaining <= 0){ etaEl.textContent = '¡Lista! 🏍️'; etaEl.className = 'stat-value good'; }
+  else { etaEl.textContent = '—'; }
+  const list = document.getElementById('historyList');
+  if(state.entries.length === 0){
+    list.innerHTML = '<div class="history-empty">Todavía no hay registros. Anota tu primer día.</div>';
+  } else {
+    const sorted = [...state.entries].sort((a,b)=> b.date.localeCompare(a.date));
+    list.innerHTML = sorted.map(e =>
+      '<div class="history-item"><span class="history-date">'+e.date+'</span><span class="history-amount">'+fmt(e.amount)+'</span></div>'
+    ).join('');
+  }
+  document.getElementById('inputGoal').value = state.goal;
+  document.getElementById('inputTarget').value = state.dailyTarget;
+}
+document.getElementById('inputDate').valueAsDate = new Date();
+document.getElementById('btnAdd').addEventListener('click', ()=>{
+  const dateVal = document.getElementById('inputDate').value;
+  const amountVal = parseFloat(document.getElementById('inputAmount').value);
+  const msg = document.getElementById('formMsg');
+  if(!dateVal || isNaN(amountVal) || amountVal <= 0){
+    msg.textContent = 'Pon una fecha y un monto válido.';
+    msg.style.color = 'var(--rust-bright)';
+    return;
+  }
+  const existingIdx = state.entries.findIndex(e=>e.date===dateVal);
+  if(existingIdx >= 0){ state.entries[existingIdx].amount = amountVal; }
+  else{ state.entries.push({date:dateVal, amount:amountVal}); }
+  saveState();
+  render();
+  document.getElementById('inputAmount').value = '';
+  msg.textContent = 'Guardado ✓';
+  msg.style.color = 'var(--good)';
+});
+document.getElementById('settingsToggle').addEventListener('click', ()=>{
+  document.getElementById('settingsBody').classList.toggle('open');
+});
+document.getElementById('btnSaveSettings').addEventListener('click', ()=>{
+  const g = parseFloat(document.getElementById('inputGoal').value);
+  const t = parseFloat(document.getElementById('inputTarget').value);
+  if(!isNaN(g) && g > 0) state.goal = g;
+  if(!isNaN(t) && t > 0) state.dailyTarget = t;
+  saveState();
+  render();
+});
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  if(confirm('¿Borrar todo el historial de ahorro? Esto no se puede deshacer.')){
+    state = { goal: state.goal, dailyTarget: state.dailyTarget, entries: [] };
+    saveState();
+    render();
+  }
+});
+loadState();
+</script>
+</body>
+  </html>
